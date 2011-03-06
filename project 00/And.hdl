@@ -1,0 +1,13 @@
+/**
+ * And gate : out = a and b
+ */
+
+CHIP And {
+
+     IN a, b;
+     OUT out;
+     PARTS:
+     Nand(a=a, b=a, out=aout);
+     Nand(a=b, b=b, out=bout);
+     Nand(a=aout, b=bout, out=out);
+}

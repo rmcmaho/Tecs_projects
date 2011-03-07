@@ -9,32 +9,24 @@
 (MAIN_LOOP)
 	@SCREEN
 	D=A	// Get start of screen memory map
-	@32
-	D=D-A
 	@addr
-	M=D	// Set R0 to just before the start of screen memory map
+	M=D	// Set M[addr] to the start of screen memory map ( M[addr] = SCREEN )
 	(PRINT_LOOP)
-		@32
-		D=A
-		@addr
-		M=M+D		// Go to the next screen section
+		@addr		// A = addr
+		A=M		// A = M[A]
+		M=-1		// M[A] = -1
+		@addr		// A = addr
+		D=M		// D = M[A]
+		@32		// A = 32
+		D=D+1		// D = D + 1
+		@addr		// A = addr
+		M=D		// M[A] = D
+		@KBD
+		D=D-A
+		@MAIN_LOOP
+		D;JGE
 		@KBD
 		D=M		// Get the keyboard memory map value
-		@BLACK
-		D;JGT		// If the keyboard memory map > 0, then jump to printing black
-		@SCREEN
-		D=A
-		@R0
-		A=D+A
-		M=0		// Otherwise, set current screen section to white
-		@PRINT_LOOP
-		0;JMP
-		(BLACK)
-		@SCREEN
-		D=A
-		@R0
-		A=D+A
-		M=-1
 		@PRINT_LOOP
 		0;JMP
 	(END_PRINT)

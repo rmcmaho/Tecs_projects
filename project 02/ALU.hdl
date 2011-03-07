@@ -63,12 +63,12 @@ CHIP ALU {
     // Negate output if no=1
     Not16(in=fOut, out=notOut);
     Mux16(a=fOut, b=notOut, sel=no,
-    		  out[0..7]=lsbOut, out[8..14]=msbOut, out[15]=sign, // Split the output for final checks
+    		  out[0..7]=lsbOut, out[8..15]=msbOut, out[15]=sign, // Split the output for final checks
 		  out=out); 	    		       		     // Send to out pin
 
     // Check if it is zero
     Or8Way(in=lsbOut, out=or0to7);
-    Or8Way(in[0..6]=msbOut, in[7]=sign, out=or8to15);
+    Or8Way(in=msbOut, out=or8to15);
     Or(a=or0to7, b=or8to15, out=notZero);
     Not(in=notZero, out=zr);
 

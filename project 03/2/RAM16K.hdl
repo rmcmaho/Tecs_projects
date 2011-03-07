@@ -21,5 +21,22 @@ CHIP RAM16K {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    // Direct access logic
+    DMux4Way(in=load, sel=address[12..13],
+    		      a=loadA,
+     		      b=loadB,
+    		      c=loadC,
+    		      d=loadD);
+    Mux4Way16(sel=address[12..13], out=out,
+		a=outA,
+		b=outB,
+		c=outC,
+		d=outD);
+
+    // Bank of registers
+    RAM4K(in=in, load=loadA, address=address[0..11], out=outA);
+    RAM4K(in=in, load=loadB, address=address[0..11], out=outB);
+    RAM4K(in=in, load=loadC, address=address[0..11], out=outC);
+    RAM4K(in=in, load=loadD, address=address[0..11], out=outD);
+
 }

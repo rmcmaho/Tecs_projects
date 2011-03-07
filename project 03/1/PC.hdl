@@ -18,5 +18,20 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Implementation missing.
+    
+    // Inc
+    Inc16(in=regOut, out=regInc);
+    Mux16(a=regOut, b=regInc, sel=inc, out=incOut);
+
+    // Load
+    Mux16(a=incOut, b=in, sel=load, out=loadOut);
+
+    // Reset
+    Mux16(a=loadOut, b=false, sel=reset, out=resetOut);
+
+    // Set register
+    Or(a=load, b=reset, out=tempOr);
+    Or(a=inc, b=tempOr, out=orOut);
+    Register(in=resetOut, load=orOut, out=out, out=regOut);
+
 }

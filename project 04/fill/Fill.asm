@@ -11,23 +11,32 @@
 	D=A	// Get start of screen memory map
 	@addr
 	M=D	// Set M[addr] to the start of screen memory map ( M[addr] = SCREEN )
+	@color
+	M=0
 	(PRINT_LOOP)
+		@color		// Get the current color
+		D=M		// Save the color for use
 		@addr		// A = addr
-		A=M		// A = M[A]
-		M=-1		// M[A] = -1
+		A=M		// A = M[A] -- Get the address of the current place in the screen buffer
+		M=D		// M[A] = -1 -- Set the screen buffer in the current address to the current color
 		@addr		// A = addr
-		D=M		// D = M[A]
-		@32		// A = 32
-		D=D+1		// D = D + 1
+		D=M		// D = M[A] -- Get the address of the current place in the screen buffer
+		D=D+1		// D = D + 1 -- Increment the address by one
 		@addr		// A = addr
-		M=D		// M[A] = D
-		@KBD
-		D=D-A
+		M=D		// M[A] = D -- Set the new incremented address
+		@KBD		// A = KBD -- Get the address of the keyboard buffer which is also the end of the screen buffer
+		D=D-A		// D = D - KBD
 		@MAIN_LOOP
-		D;JGE
+		D;JGE		// If current address minus KBD is greater than 0, than jump to main loop
+		@color
+		M=0
 		@KBD
-		D=M		// Get the keyboard memory map value
+		D=M		// D = M[KBD] -- Get the keyboard memory map value
 		@PRINT_LOOP
+		D;JEQ		// If the keyboad buffer is equal to zero (no key is pressed), jump to the beginning of the print loop
+		@color
+		M=-1
+		@PRINT_LOOP	
 		0;JMP
 	(END_PRINT)
 	@MAIN_LOOP

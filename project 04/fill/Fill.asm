@@ -11,9 +11,17 @@
 	D=A	// Get start of screen memory map
 	@addr
 	M=D	// Set M[addr] to the start of screen memory map ( M[addr] = SCREEN )
-	@color
-	M=0
 	(PRINT_LOOP)
+		(SET_COLOR)
+			@color
+			M=0		// Set the color to WHITE
+			@KBD
+			D=M		// D = M[KBD] -- Get the keyboard memory map value
+			@END_COLOR
+			D;JEQ		// If the keyboad buffer is equal to zero (no key is pressed), keep the color white
+			@color
+			M=-1		// Otherwise, set the color to black
+		(END_COLOR)
 		@color		// Get the current color
 		D=M		// Save the color for use
 		@addr		// A = addr
@@ -28,14 +36,6 @@
 		D=D-A		// D = D - KBD
 		@MAIN_LOOP
 		D;JGE		// If current address minus KBD is greater than 0, than jump to main loop
-		@color
-		M=0
-		@KBD
-		D=M		// D = M[KBD] -- Get the keyboard memory map value
-		@PRINT_LOOP
-		D;JEQ		// If the keyboad buffer is equal to zero (no key is pressed), jump to the beginning of the print loop
-		@color
-		M=-1
 		@PRINT_LOOP	
 		0;JMP
 	(END_PRINT)

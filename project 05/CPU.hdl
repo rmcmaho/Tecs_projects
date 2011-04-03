@@ -39,6 +39,21 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Implementation missing.
+
+    // Decode
+    Not(in=instruction[15], out=loadA);
+    
+    // The 'A' register
+    ARegister(in=instruction, load=loadA, out=aOut, out[0..14]=addressM);
+
+    // Or16(a=instruction, b=instruction, out[0..14]=addressM);
+
+    // Not(in=instruction[15], out=loadD);
+
+    // The 'D' register
+    DRegister(in=instruction, load=instruction[15], out=dOut);
+
+    Not(in=reset, out=notReset);
+    PC(in=aOut, load=reset, inc=notReset, reset=reset, out[0..14]=pc);
 }
 

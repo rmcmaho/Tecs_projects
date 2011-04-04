@@ -50,7 +50,7 @@ CHIP CPU {
     Mux16(a=aOut, b=inM, sel=instruction[12], out=AorM);
 
     // ALU
-    ALU(x=dOut, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM, ng=negativeResult); 
+    ALU(x=dOut, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM, ng=negativeResult, zr=zeroResult); 
     
     // The 'A' register
     Mux16(a=instruction, b=aluOut, sel=storeA, out=aIn);
@@ -60,7 +60,13 @@ CHIP CPU {
     DRegister(in=aluOut, load=loadD, out=dOut);
 
     Not(in=reset, out=incPC);
+    Not(in=negativeResult, out=notNegativeResult);
     And(a=negativeResult, b=instruction[2], out=jlt);
-    PC(in=aOut, load=jlt, inc=incPC, reset=reset, out[0..14]=pc);
+    And(a=zeroResult, b=instruction[1], out=jeq);
+    And(a=notNegativeResult, b=instruction[0], out=jgt);
+    Or(a=jlt, b=jeq, out=jump1);
+    Or(a=jump1, b=jgt, out=jump2);
+    And(a=jump2, b=cInstruction, out=jump);
+    PC(in=aOut, load=jump, inc=incPC, reset=reset, out[0..14]=pc);
 }
 

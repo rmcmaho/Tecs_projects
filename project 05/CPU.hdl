@@ -42,9 +42,11 @@ CHIP CPU {
 
     // Decode
     Not(in=instruction[15], out=loadA);
+    And(a=instruction[3], b=instruction[15], out=writeM);
+    Mux16(a=aOut, b=inM, sel=instruction[12], out=AorM);
 
     // ALU
-    ALU(x=dOut, y=aOut, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=dIn, out=outM); 
+    ALU(x=dOut, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=dIn, out=outM); 
     
     // The 'A' register
     ARegister(in=instruction, load=loadA, out=aOut, out[0..14]=addressM);

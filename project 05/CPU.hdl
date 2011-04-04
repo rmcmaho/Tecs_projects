@@ -43,18 +43,21 @@ CHIP CPU {
     // Decode
     Not(in=instruction[15], out=loadA);
     And(a=instruction[3], b=instruction[15], out=writeM);
+    And(a=instruction[5], b=instruction[15], out=storeA);
     Mux16(a=aOut, b=inM, sel=instruction[12], out=AorM);
 
     // ALU
-    ALU(x=dOut, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=dIn, out=outM); 
+    ALU(x=dOut, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=aluOut, out=outM, ng=negativeResult); 
     
     // The 'A' register
-    ARegister(in=instruction, load=loadA, out=aOut, out[0..14]=addressM);
+    Mux16(a=instruction, b=aluOut, sel=storeA, out=aIn);
+    ARegister(in=aIn, load=loadA, out=aOut, out[0..14]=addressM);
 
     // The 'D' register
-    DRegister(in=dIn, load=instruction[4], out=dOut);
+    DRegister(in=aluOut, load=instruction[4], out=dOut);
 
     Not(in=reset, out=incPC);
-    PC(in=aOut, load=reset, inc=incPC, reset=reset, out[0..14]=pc);
+    And(a=negativeResult, b=instruction[2], out=jlt);
+    PC(in=aOut, load=jlt, inc=incPC, reset=reset, out[0..14]=pc);
 }
 

@@ -19,5 +19,7 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    // Implementation missing.
+    CPU(inM=memoryOut, instruction=romOut, reset=reset, writeM=writeM, outM=outM, addressM=addressM, pc=pc);
+    ROM32K(address=pc, out=romOut);
+    Memory(load=writeM, in=outM, address=addressM, out=memoryOut);
 }

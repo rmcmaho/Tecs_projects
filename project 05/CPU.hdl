@@ -59,14 +59,35 @@ CHIP CPU {
     // The 'D' register
     DRegister(in=aluOut, load=loadD, out=dOut);
 
-    Not(in=reset, out=incPC);
+    // Ensure JLT is exactly satisfied
+    Xor(a=negativeResult, b=instruction[2], out=jltNotSatisfied);
+    Not(in=jltNotSatisfied, out=jltSatisfied);
+
+    // Ensure JEQ is exactly satisfied
+    Xor(a=zeroResult, b=instruction[1], out=jeqNotSatisfied);
+    Not(in=jeqNotSatisfied, out=jeqSatisfied);
+
+    // Ensure JGT is exactly satisfied
     Not(in=negativeResult, out=notNegativeResult);
-    And(a=negativeResult, b=instruction[2], out=jlt);
-    And(a=zeroResult, b=instruction[1], out=jeq);
-    And(a=notNegativeResult, b=instruction[0], out=jgt);
-    Or(a=jlt, b=jeq, out=jump1);
-    Or(a=jump1, b=jgt, out=jump2);
-    And(a=jump2, b=cInstruction, out=jump);
+    Xor(a=notNegativeResult, b=instruction[0], out=jgtNotSatisfied);
+    Not(in=jgtNotSatisfied, out=jgtSatisfied);
+
+    // Make sure all JMP values are satisfied
+    And(a=jltSatisfied, b=jeqSatisfied, out=twoSatisfied);
+    And(a=twoSatisfied, b=jgtSatisfied, out=allJmpSatisfied);
+
+    
+    And(a=instruction[0], b=instruction[1], out=maybeJmp);
+    And(a=maybeJmp, b=instruction[2], out=unconditionalJmp);
+
+    // Jump if all JMP values are satisfied or if it is an unconditional JMP    
+    Or(a=allJmpSatisfied, b=unconditionalJmp, out=possibleJmp);
+
+    // Only JMP on A-instructions
+    And(a=possibleJmp, b=instruction[15], out=jump);
+
+    Not(in=reset, out=incPC);
+
     PC(in=aOut, load=jump, inc=incPC, reset=reset, out[0..14]=pc);
 }
 

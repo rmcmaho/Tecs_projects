@@ -39,7 +39,16 @@ class C_Command:
         if(len(parsingJmp) == 1):
             return (parsingJmp[0], None)
         else:
-            return (parsingJmp[0], parsingJmp[1])
+            jmp = parsingJmp[1]
+            restOfCommand = parsingJmp[0]
+            # Assert the jump is one of the possible values
+            if(jmp == "JGT" or jmp == "JEQ" or
+               jmp == "JGE" or jmp == "JLT" or
+               jmp == "JNE" or jmp == "JLE" or
+               jmp == "JMP"):
+                return (restOfCommand, jmp)
+            else:
+                return (None, None)
 
     def parseDest(self,line):
         ''' Returns the dest mnemonic in the current C-command (8 possibilities) '''
@@ -47,7 +56,16 @@ class C_Command:
         if(len(parsingDest) == 1):
             return (None, parsingDest[0])
         else:
-            return (parsingDest[0], parsingDest[1])
+            dest = parsingDest[0]
+            restOfCommand = parsingDest[1]
+            # Assert the dest is one of the possible values
+            if(dest == "M" or dest == "D" or
+               dest == "MD" or dest == "A" or
+               dest == "AM" or dest == "AD" or
+               dest == "AMD"):
+                return (dest, restOfCommand)
+            else:
+                return (None, None)
 
     def removeComment(self, line):
         lineWithoutComments = line.split("//",1)

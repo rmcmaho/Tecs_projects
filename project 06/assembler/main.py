@@ -4,12 +4,14 @@ import sys
 
 
 class A_Command:
+    ''' For @Xxx where Xxx is either a symbol or a decimal number '''
     def __init__(self, symbol):
         self.symbol = symbol
     def __repr__(self):
         return "A_COMMAND: @"+self.symbol
 
 class L_Command:
+    ''' For (Xxx) where Xxx is a symbol '''
     def __init__(self, symbol, lineNumber=0):
         self.symbol = symbol
         self.lineNumber = lineNumber
@@ -17,6 +19,7 @@ class L_Command:
         return "L_COMMAND: ("+self.symbol+") = "+self.lineNumber
 
 class C_Command:
+    ''' For dest=comp;jump '''
     def __init__(self, line):
         self.dest, self.comp, self.jmp = self.parseCommand(line)
 
@@ -31,6 +34,7 @@ class C_Command:
         return output
         
     def parseJmp(self,line):
+        ''' Returns the jump mnemonic in the current C-command (8 possibilities) '''
         parsingJmp = line.split(";",1)
         if(len(parsingJmp) == 1):
             return (parsingJmp[0], None)
@@ -38,6 +42,7 @@ class C_Command:
             return (parsingJmp[0], parsingJmp[1])
 
     def parseDest(self,line):
+        ''' Returns the dest mnemonic in the current C-command (8 possibilities) '''
         parsingDest = line.split("=",1)
         if(len(parsingDest) == 1):
             return (None, parsingDest[0])
@@ -45,6 +50,7 @@ class C_Command:
             return (parsingDest[0], parsingDest[1])
 
     def parseCommand(self,line):
+        ''' Returns the comp mnemonic in the C-command (28 possibilities) '''
         dest, compAndJmp = self.parseDest(line)
         comp, jmp = self.parseJmp(compAndJmp)
         return dest, comp, jmp

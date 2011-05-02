@@ -16,7 +16,7 @@ class L_Command:
         self.symbol = symbol
         self.lineNumber = lineNumber
     def __repr__(self):
-        return "L_COMMAND: ("+self.symbol+") = "+self.lineNumber
+        return "L_COMMAND: ("+self.symbol+") = "+str(self.lineNumber)
 
 class C_Command:
     ''' For dest=comp;jump '''
@@ -49,9 +49,14 @@ class C_Command:
         else:
             return (parsingDest[0], parsingDest[1])
 
+    def removeComment(self, line):
+        lineWithoutComments = line.split("//",1)
+        return lineWithoutComments[0].strip()
+
     def parseCommand(self,line):
         ''' Returns the comp mnemonic in the C-command (28 possibilities) '''
-        dest, compAndJmp = self.parseDest(line)
+        command = self.removeComment(line)
+        dest, compAndJmp = self.parseDest(command)
         comp, jmp = self.parseJmp(compAndJmp)
         return dest, comp, jmp
 

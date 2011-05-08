@@ -35,10 +35,10 @@ class C_Command:
     # Operation to compute
     comp = None
     # Jump condition
-    jmp = None
+    jump = None
     
     def __init__(self, line):
-        self.dest, self.comp, self.jmp = self.parseCommand(line)
+        self.dest, self.comp, self.jump = self.parseCommand(line)
 
     def __repr__(self):
         output = "C_COMMAND: "
@@ -46,8 +46,8 @@ class C_Command:
             output += self.dest + "="
         if self.comp != None:
             output += self.comp
-        if self.jmp != None:
-            output += ";"+self.jmp
+        if self.jump != None:
+            output += ";"+self.jump
         return output
         
     def parseJmp(self,line):

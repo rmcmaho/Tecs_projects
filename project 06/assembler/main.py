@@ -2,24 +2,43 @@
 
 import sys
 
+class Command(object):
+    def assembleCommand(self):
+        ''' Converts the command into binary format'''
+        raise NotImplementedError
 
-class A_Command:
+class A_Command(Command):
     ''' For @Xxx where Xxx is either a symbol or a decimal number '''
+    # Either a symbol or a decimal number
+    symbol = None
+    
     def __init__(self, symbol):
         self.symbol = symbol
     def __repr__(self):
         return "A_COMMAND: @"+self.symbol
 
-class L_Command:
+class L_Command(Command):
     ''' For (Xxx) where Xxx is a symbol '''
+    # Either a symbol or a decimal number
+    symbol = None
+    # A decimal number indicating label location
+    lineNumber = None
+    
     def __init__(self, symbol, lineNumber=0):
         self.symbol = symbol
         self.lineNumber = lineNumber
     def __repr__(self):
         return "L_COMMAND: ("+self.symbol+") = "+str(self.lineNumber)
 
-class C_Command:
+class C_Command(Command):
     ''' For dest=comp;jump '''
+    # Location to store result
+    dest = None
+    # Operation to compute
+    comp = None
+    # Jump condition
+    jmp = None
+    
     def __init__(self, line):
         self.dest, self.comp, self.jmp = self.parseCommand(line)
 
@@ -72,7 +91,8 @@ class C_Command:
         return lineWithoutComments[0].strip()
 
     def parseCommand(self,line):
-        ''' Returns the comp mnemonic in the C-command (28 possibilities) '''
+        ''' Returns the comp mnemonic in the C-command (28 possibilities)
+        along with the dest and jmp components if they exist'''
         command = self.removeComment(line)
         dest, compAndJmp = self.parseDest(command)
         comp, jmp = self.parseJmp(compAndJmp)

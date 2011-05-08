@@ -1,11 +1,11 @@
 # HackAssemblyParser module
 
-class Command(object):
-    def assembleCommand(self):
-        ''' Converts the command into binary format'''
-        raise NotImplementedError
+# Encapsulates access to the input code. Reads an assembly language
+# command, parses it, and provides convenient access to the command's
+# components (fields and symbols). In addition, removes all white space
+# and comments.
 
-class A_Command(Command):
+class A_Command:
     ''' For @Xxx where Xxx is either a symbol or a decimal number '''
     # Either a symbol or a decimal number
     symbol = None
@@ -15,7 +15,7 @@ class A_Command(Command):
     def __repr__(self):
         return "A_COMMAND: @"+self.symbol
 
-class L_Command(Command):
+class L_Command:
     ''' For (Xxx) where Xxx is a symbol '''
     # Either a symbol or a decimal number
     symbol = None
@@ -28,7 +28,7 @@ class L_Command(Command):
     def __repr__(self):
         return "L_COMMAND: ("+self.symbol+") = "+str(self.lineNumber)
 
-class C_Command(Command):
+class C_Command:
     ''' For dest=comp;jump '''
     # Location to store result
     dest = None

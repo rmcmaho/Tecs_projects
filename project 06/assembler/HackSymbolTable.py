@@ -48,9 +48,9 @@ class SymbolTable:
 
 def generateSymbolTable (inputFileName):
     ''' Function to generate a symbol table from an assembly file '''
+    symbolTable = SymbolTable()
     with open(inputFileName) as assemblyFile:
         lineNumber = 0
-        symbolTable = SymbolTable()
         for line in assemblyFile:
             # Strip off leading and trailing whitespace
             line = line.strip()
@@ -68,9 +68,9 @@ def generateSymbolTable (inputFileName):
                     # Then add it
                     symbolTable.addEntry(aSymbol)
                     continue
-                elif line.startswith("("):
-                    # Do not increment line number for labels
-                    pass
+            elif line.startswith("("):
+                # Do not increment line number for labels
+                pass
                 # Label begins after first ( and ends before )
                 label = line[1:-1]
                 # Remove leading or trailing whitespace from the label
@@ -80,10 +80,10 @@ def generateSymbolTable (inputFileName):
                     # Then add it as the line number
                     symbolTable.addEntry(label, lineNumber)
                     continue
-                elif line.startswith("//"):
-                    # Ignore comments
-                    continue
-                else:
-                    # Incrememnt line number for C commands
-                    lineNumber += 1
-        return symbolTable
+            elif line.startswith("//"):
+                # Ignore comments
+                continue
+            else:
+                # Incrememnt line number for C commands
+                lineNumber += 1
+    return symbolTable

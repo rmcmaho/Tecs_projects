@@ -32,7 +32,7 @@ class SymbolTable:
             self.symbolTable[symbol] = str(self.nextUnusedAddress)
             self.nextUnusedAddress = self.nextUnusedAddress + 1
         else:
-            self.symbolTable[symbol] = address
+            self.symbolTable[symbol] = str(address)
 
     def contains (self, symbol):
         try:

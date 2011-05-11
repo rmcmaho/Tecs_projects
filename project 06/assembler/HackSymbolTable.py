@@ -42,13 +42,20 @@ class SymbolTable:
             return False
 
     def getAddress (self, symbol):
-        return self.symbolTable[symbol]
+         try:
+             # If the symbol is already a number
+             intConvert = int(symbol)
+             # Return it
+             return symbol
+         except ValueError:
+             return self.symbolTable[symbol]
 # END SymbolTable
 
 
 def generateSymbolTable (inputFileName):
     ''' Function to generate a symbol table from an assembly file '''
     symbolTable = SymbolTable()
+    # First pass to generate label symbols
     with open(inputFileName) as assemblyFile:
         lineNumber = 0
         for line in assemblyFile:
@@ -58,16 +65,6 @@ def generateSymbolTable (inputFileName):
             if len(line) == 0:
                 # Ignore blank lines
                 continue
-            elif line.startswith("@"):
-                # Increment line number for A commands
-                lineNumber += 1
-                # Symbol starts after @
-                aSymbol = line[1:]
-                # If the symbol doesn't already exist
-                if (not symbolTable.contains(aSymbol)):
-                    # Then add it
-                    symbolTable.addEntry(aSymbol)
-                    continue
             elif line.startswith("("):
                 # Do not increment line number for labels
                 pass
@@ -84,6 +81,45 @@ def generateSymbolTable (inputFileName):
                 # Ignore comments
                 continue
             else:
-                # Incrememnt line number for C commands
+                # Incrememnt line number for C and A commands
                 lineNumber += 1
+    # End first pass
+
+    # Second pass to generate A command symbols
+    with open(inputFileName) as assemblyFile:
+        lineNumber = 0
+        for line in assemblyFile:
+            # Strip off leading and trailing whitespace
+            line = line.strip()
+
+            if len(line) == 0:
+                # Ignore blank lines
+                continue
+            elif line.startswith("@"):
+                # Increment line number for A commands
+                lineNumber += 1
+                # Symbol starts after @
+                aSymbol = line[1:]
+                try:
+                    # If the symbol is already a number
+                    intConvert = int(aSymbol)
+                    # Ignore it
+                    continue
+                except ValueError:
+                    pass
+                # If the symbol doesn't already exist
+                if (not symbolTable.contains(aSymbol)):
+                    # Then add it
+                    symbolTable.addEntry(aSymbol)
+                    continue
+            elif line.startswith("("):
+                # Ignore labels
+                continue
+            elif line.startswith("//"):
+                # Ignore comments
+                continue
+            else:
+                # Incrememnt line number for C and A commands
+                lineNumber += 1
+    # End second pass
     return symbolTable

@@ -8,7 +8,7 @@ def main():
     # Get the input filename (required)
     inputFileName = sys.argv[1]
     # Set the default output filename
-    outputFileName = 'a.out'
+    outputFileName = 'Prog.hack'
     # Try to get the output filename
     try:
         outputFileName = sys.argv[2]

@@ -3,6 +3,7 @@
 import sys
 import HackAssemblyParser
 import HackBinaryCode
+import HackSymbolTable
 
 def main():
     # Get the input filename (required)

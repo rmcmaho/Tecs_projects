@@ -5,6 +5,8 @@
 # components (fields and symbols). In addition, removes all white space
 # and comments.
 
+import HackSymbolTable
+
 class A_Command:
     ''' For @Xxx where Xxx is either a symbol or a decimal number '''
     # Either a symbol or a decimal number
@@ -96,7 +98,7 @@ class C_Command:
         comp, jmp = self.parseJmp(compAndJmp)
         return dest, comp, jmp
 
-def parseAssembly(fileName):
+def parseAssembly(fileName, symbolTable):
     assemblyFile = file(fileName)
     lineNumber = 0
     for line in assemblyFile:
@@ -106,10 +108,14 @@ def parseAssembly(fileName):
         if len(line) == 0:
             continue
         elif line.startswith("@"):
-            yield A_Command(line[1:])
+            symbol = line[1:]
+            address = symbolTable.getAddress(symbol)
+            yield A_Command(address)
             continue
         elif line.startswith("("):
-            yield L_Command(line[1:-1], lineNumber)
+            symbol = line[1:-1]
+            address = symbolTable.getAddress(symbol)
+            yield L_Command(symbol, address)
             continue
         elif line.startswith("//"):
             continue

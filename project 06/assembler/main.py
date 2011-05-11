@@ -15,13 +15,17 @@ def main():
         outputFileName = sys.argv[2]
     except IndexError:
         pass
+    # Generate the symbol table
+    symbolTable = HackSymbolTable.generateSymbolTable(inputFileName)
     # Parse the input file
-    parser = HackAssemblyParser.parseAssembly(inputFileName)
+    parser = HackAssemblyParser.parseAssembly(inputFileName, symbolTable)
     # Open the output file for writing
     with open (outputFileName, 'w') as outputFile:
         # Step through the parser and convert each command
         for op in parser:
             print op
+            if (isinstance(op, HackAssemblyParser.L_Command)):
+                continue
             binaryCommand = HackBinaryCode.convertCommand(op)
             print binaryCommand
             outputFile.write(binaryCommand)

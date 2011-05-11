@@ -1,4 +1,6 @@
 
+# Keeps a correspondence between symbolic labels and numeric addresses.
+
 class SymbolTable:
     ''' Class to represent a symbol table'''
     symbolTable = {"SP"     : '0',
